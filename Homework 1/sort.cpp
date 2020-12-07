@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-#include "order.cpp"
+#include "order.h"
 
 using namespace std;
 
@@ -49,18 +49,6 @@ void quickSort(vector<T> &v, int low, int high)
 }
 
 template <class T>
-void sorting(vector<T> v)
-{
-
-    for (int i = 0; i < v.size() - 1; i++)
-    {
-        if (v[i].getCountry() < v[i + 1].getCountry())
-        {
-            swap(v[i], v[i + 1]);
-        }
-    }
-}
-template <class T>
 void printv(vector<T> v)
 {
     for (int i = 0; i < v.size(); i++)
@@ -69,9 +57,11 @@ void printv(vector<T> v)
     }
 }
 
-int main()
+/*int main()
 {
     vector<order> a1;
+
+    order *abc = new order("x", "Fruits", "443368995", 1593, 3839.13);
 
     order o1 = order("x", "Fruits", "443368995", 1593, 3839.13);
     order o2 = order("a", "Clothes", "667593514", 4611, 338631.84);
@@ -84,6 +74,7 @@ int main()
     a1.push_back(o3);
     a1.push_back(o4);
     a1.push_back(o5);
+    a1.push_back(*abc);
 
     quickSort(a1, 0, a1.size() - 1);
     printv(a1);
@@ -91,4 +82,4 @@ int main()
     //int clocktime = clock();
 
     return 0;
-}
+}*/
