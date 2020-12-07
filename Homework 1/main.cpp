@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
 {
 
 	ifstream file;
-	file.open("/home/incesubaris/Desktop/ITU/Analysis-of-Algorithms-I/Homework 1/sales.txt");
+	file.open("sales.txt");
 
 	if (!file)
 	{
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
 	duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 	cout << "Execution Time: " << duration << endl;
 
-	ofstream myfile("/home/incesubaris/Desktop/ITU/Analysis-of-Algorithms-I/Homework 1/sorted.txt");
+	ofstream myfile("sorted.txt");
 	if (myfile.is_open())
 	{
 		for (int i = 0; i < orderlist.size(); i++)
