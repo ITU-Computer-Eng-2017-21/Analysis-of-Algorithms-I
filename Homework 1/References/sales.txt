@@ -1,0 +1,6 @@
+Country	Item Type	Order ID	Units Sold	Total Profit
+South Africa	Fruits	443368995	1593	3839.13
+Morocco	Clothes	667593514	4611	338631.84
+Papua New Guinea	Meat	940995585	360	20592
+Djibouti	Clothes	880811536	562	41273.28
+Slovakia	Beverages	174590194	3973	62217.18
