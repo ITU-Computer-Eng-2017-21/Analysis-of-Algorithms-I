@@ -1,9 +1,5 @@
 #include <string>
 using namespace std;
-#include <vector>
-#include <iostream>
-//#include "quicksort.cpp"
-//#include "funct.cpp"
 
 class order
 {
@@ -24,13 +20,13 @@ public:
     ~order();
 };
 
-order::order(string s1, string s2, string s3, int i4, float f5)
+order::order(string newCountry, string newItem_Type, string newOrder_ID, int newUnits_Sold, float newTotal_Profit)
 {
-    Country = s1;
-    Item_Type = s2;
-    Order_ID = s3;
-    Units_Sold = i4;
-    Total_Profit = f5;
+    Country = newCountry;
+    Item_Type = newItem_Type;
+    Order_ID = newOrder_ID;
+    Units_Sold = newUnits_Sold;
+    Total_Profit = newTotal_Profit;
 }
 string order::getCountry()
 {
