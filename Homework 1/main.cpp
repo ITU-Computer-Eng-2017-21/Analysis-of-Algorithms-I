@@ -9,11 +9,11 @@ using namespace std;
 
 #include "sort.cpp"
 
-int main(void)
+int main(int argc, char const *argv[])
 {
 
 	ifstream file;
-	file.open("Homework 1/sales.txt");
+	file.open("/home/incesubaris/Desktop/ITU/Analysis-of-Algorithms-I/Homework 1/sales.txt");
 
 	if (!file)
 	{
@@ -21,7 +21,7 @@ int main(void)
 		exit(1);
 	}
 
-	int N = 100; //you should read value of N from command line
+	int N = stoi(argv[1]); //you should read value of N from command line
 	string line;
 
 	vector<order> orderlist;
@@ -50,9 +50,24 @@ int main(void)
 		order *new_order = new order(Country, Item_Type, Order_ID, Units_Sold, Total_Profit);
 		orderlist.push_back(*new_order);
 	}
+	clock_t start;
+	double duration;
+
+	start = clock();
 
 	quickSort(orderlist, 0, orderlist.size() - 1);
-	printv(orderlist);
+
+	duration = (clock() - start) / (double)CLOCKS_PER_SEC;
+	cout << "Execution Time: " << duration << endl;
+
+	ofstream myfile("/home/incesubaris/Desktop/ITU/Analysis-of-Algorithms-I/Homework 1/sorted.txt");
+	if (myfile.is_open())
+	{
+		for (int i = 0; i < orderlist.size(); i++)
+		{
+			myfile << orderlist[i].getCountry() << "\t" << orderlist[i].getItem_Type() << "\t" << orderlist[i].getOrder_ID() << "\t" << orderlist[i].getUnit_Sold() << "\t" << orderlist[i].getTotal_Profit() << "\n";
+		}
+	}
 
 	return 0;
 }
