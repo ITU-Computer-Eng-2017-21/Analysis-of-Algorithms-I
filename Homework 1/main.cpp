@@ -63,6 +63,17 @@ int main(int argc, char const *argv[])
 	ofstream myfile("sorted.txt");
 	if (myfile.is_open())
 	{
+		myfile << "Country"
+			   << "\t"
+			   << "Item Type"
+			   << "\t"
+			   << "Order ID"
+			   << "\t"
+			   << "Units Sold"
+			   << "\t"
+			   << "Total Profit"
+			   << "\n";
+
 		for (int i = 0; i < orderlist.size(); i++)
 		{
 			myfile << orderlist[i].getCountry() << "\t" << orderlist[i].getItem_Type() << "\t" << orderlist[i].getOrder_ID() << "\t" << orderlist[i].getUnit_Sold() << "\t" << orderlist[i].getTotal_Profit() << "\n";
