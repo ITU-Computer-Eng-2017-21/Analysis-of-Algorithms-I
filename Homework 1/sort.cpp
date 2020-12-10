@@ -2,14 +2,14 @@
 #include <vector>
 #include <string>
 
-#include "order.h"
+#include "order.h" //order class header file
 
 using namespace std;
 
 template <class T>
 int partition(vector<T> &v, int low, int high)
 {
-    string pivotCountry = v[high].getCountry();          // pivot
+    string pivotCountry = v[high].getCountry();          //
     float pivotTotal_Profit = v[high].getTotal_Profit(); // pivot
 
     int i = (low - 1); // Index of smaller element
@@ -37,7 +37,7 @@ void quickSort(vector<T> &v, int low, int high)
 {
     if (low < high)
     {
-        /* pi is partitioning index, arr[p] is now 
+        /* pi is partitioning index, v[p] is now 
 		at right place */
         int pi = partition(v, low, high);
 

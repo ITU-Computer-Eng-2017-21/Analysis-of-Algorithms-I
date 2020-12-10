@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
 		exit(1);
 	}
 
-	int N = stoi(argv[1]); //you should read value of N from command line
+	int N = stoi(argv[1]); //read value of N from command line
 	string line;
 
 	vector<order> orderlist;
@@ -50,17 +50,17 @@ int main(int argc, char const *argv[])
 		order *new_order = new order(Country, Item_Type, Order_ID, Units_Sold, Total_Profit);
 		orderlist.push_back(*new_order);
 	}
-	clock_t start;
+	clock_t start; // time operation
 	double duration;
 
 	start = clock();
 
-	quickSort(orderlist, 0, orderlist.size() - 1);
+	quickSort(orderlist, 0, orderlist.size() - 1); //QuickSort Algorithm
 
 	duration = (clock() - start) / (double)CLOCKS_PER_SEC;
 	cout << "Execution Time: " << duration << endl;
 
-	ofstream myfile("sorted.txt");
+	ofstream myfile("sorted.txt"); // write to txt file
 	if (myfile.is_open())
 	{
 		myfile << "Country"
