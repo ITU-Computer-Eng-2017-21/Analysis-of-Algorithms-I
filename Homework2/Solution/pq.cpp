@@ -80,7 +80,7 @@ void shiftDown(int i)
 
 // Function to insert a new element
 // in the Binary Heap
-void insert(int p)
+void insert(float p)
 {
     size = size + 1;
     Heap.push_back(p);
@@ -90,9 +90,9 @@ void insert(int p)
 
 // Function to extract the element with
 // maximum priority
-int extractMax()
+float extractMax()
 {
-    int result = Heap[0];
+    float result = Heap[0];
 
     // Replace the value at the root
     // with the last leaf
@@ -107,7 +107,7 @@ int extractMax()
 
 // Function to change the priority
 // of an element
-void update(int i, int p)
+void update(int i, float p)
 {
     int oldp = Heap[i];
     Heap[i] = p;
