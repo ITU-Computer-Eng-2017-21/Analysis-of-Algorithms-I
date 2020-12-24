@@ -4,6 +4,7 @@
 
 #include <sstream>
 #include <math.h>
+#include <chrono>
 
 using namespace std;
 #include "pq.cpp"
@@ -33,6 +34,8 @@ int main(int argc, char const *argv[])
 
     //int m = 14;
     //double p = 0.65;
+
+    auto t1 = chrono::high_resolution_clock::now();
 
     for (int op = 1; op < m + 1; op++)
     {
@@ -73,6 +76,10 @@ int main(int argc, char const *argv[])
             }
         }
     }
+
+    auto t2 = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> elapsed = t2 - t1; //if you want milliseconds you should use: std::chrono::duration<double,milli>
+    cout << "Algorithm Runtime is: " << elapsed.count() << " milliseconds." << endl;
 
     cout << "The number of taxi additions: " << op_add << " and distance updates: " << op_update << endl;
 
