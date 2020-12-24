@@ -6,14 +6,13 @@
 #include <vector>
 using namespace std;
 
-vector<float> Heap;
+vector<double> Heap;
 int size = -1;
 
 // Function to return the index of the
 // parent node of a given node
 int parent(int i)
 {
-
     return (i - 1) / 2;
 }
 
@@ -21,7 +20,6 @@ int parent(int i)
 // left child of the given node
 int leftChild(int i)
 {
-
     return ((2 * i) + 1);
 }
 
@@ -29,7 +27,6 @@ int leftChild(int i)
 // right child of the given node
 int rightChild(int i)
 {
-
     return ((2 * i) + 2);
 }
 
@@ -80,7 +77,7 @@ void shiftDown(int i)
 
 // Function to insert a new element
 // in the Binary Heap
-void insert(float p)
+void add(double p)
 {
     size = size + 1;
     Heap.push_back(p);
@@ -90,26 +87,30 @@ void insert(float p)
 
 // Function to extract the element with
 // maximum priority
-float extractMax()
+double callTaxi()
 {
-    float result = Heap[0];
+    double result = Heap[0];
 
     // Replace the value at the root
     // with the last leaf
-    Heap[0] = Heap[size];
+    //Heap[0] = Heap[size];
+    swap(Heap[0], Heap[size]);
+    Heap.pop_back();
     size = size - 1;
 
     // Shift down the replaced element
     // to maintain the heap property
     shiftDown(0);
+
     return result;
 }
 
 // Function to change the priority
 // of an element
-void update(int i, float p)
+void update(int i, double p)
 {
-    int oldp = Heap[i];
+
+    float oldp = Heap[i];
     Heap[i] = p;
 
     if (p < oldp)
@@ -121,25 +122,3 @@ void update(int i, float p)
         shiftDown(i);
     }
 }
-
-// Function to get value of the current
-// maximum element
-/*int getMax()
-{
-
-    return Heap[0];
-}*/
-
-// Function to remove the element
-// located at given index
-/*void remove(int i)
-{
-    Heap[i] = getMax() + 1;
-
-    // Shift the node to the root
-    // of the heap
-    shiftUp(i);
-
-    // Extract the node
-    extractMax();
-}*/
