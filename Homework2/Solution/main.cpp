@@ -9,7 +9,8 @@ using namespace std;
 #include "pq.cpp"
 //#include "pq_array.cpp"
 // Driver Code
-int main()
+int main(int argc, char const *argv[])
+
 {
 
     /*		  45 
@@ -29,7 +30,7 @@ int main()
     // priority queue
 
     ifstream file;
-    file.open("Homework2/Solution/locations.txt");
+    file.open("locations.txt");
 
     if (!file)
     {
@@ -40,8 +41,8 @@ int main()
     string line;
     getline(file, line);
 
-    float p = 0.8;
-    int M = 100;
+    int M = stoi(argv[1]);
+    float p = stof(argv[2]);
 
     for (int z = 0; z < M; z++)
     {
@@ -89,12 +90,12 @@ int main()
     cout << "\n";
 
     // Node with maximum priority
-    cout << "Node with maximum priority : "
+    cout << "Node with nearest : "
          << extractMax() << "\n";
 
     // Priority queue after extracting max
     cout << "Priority queue after "
-         << "extracting maximum : ";
+         << "call nearest : ";
     int j = 0;
     while (j <= size)
     {
