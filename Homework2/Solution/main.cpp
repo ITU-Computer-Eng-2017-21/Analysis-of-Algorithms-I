@@ -9,12 +9,8 @@
 using namespace std;
 #include "pq.cpp"
 
-// Driver Code
 int main(int argc, char const *argv[])
-//int main()
 {
-    // Insert the element to the
-    // priority queue
     srand(time(0));
     ifstream file;
     file.open("locations.txt");
@@ -83,14 +79,11 @@ int main(int argc, char const *argv[])
 
     cout << "The number of taxi additions: " << op_add << " and distance updates: " << op_update << endl;
 
-    int i = 0;
-    // Priority queue before extracting max
-    cout << "Priority Queue : ";
-    while (i <= size)
+    /*int sz = Heap.size();
+    for (int i = 0; i < sz; i++)
     {
-        cout << Heap[i] << " ";
-        i++;
-    }
+        cout << callTaxi() << endl;
+    }*/
 
     return 0;
 }
