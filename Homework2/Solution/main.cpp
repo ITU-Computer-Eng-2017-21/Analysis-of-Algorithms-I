@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
 
     for (int op = 1; op < m + 1; op++)
     {
-        if (op % 100 == 0 && size > 0)
+        if (op % 100 == 0 && size >= 0)
         {
             cout << "The distance of the called taxi: " << callTaxi() << endl;
         }
@@ -47,7 +47,6 @@ int main(int argc, char const *argv[])
 
             if (r < ratio)
             {
-                op_update++;
                 if (size >= 0)
                 {
                     int x = rand() % Heap.size();
@@ -55,14 +54,18 @@ int main(int argc, char const *argv[])
                         update(x, Heap[x] - 0.01);
                     }
                 }
+                op_update++;
             }
-            else if (r >= ratio)
+            else
             {
+                double h_longitude = 33.40819;
+                double h_latitude = 39.19001;
+
                 float longitude, latitude;
                 file >> longitude;
                 file >> latitude;
 
-                float distance = sqrt(longitude * longitude + latitude * latitude);
+                double distance = sqrt(pow((longitude - h_longitude), 2) + pow((latitude - h_latitude), 2));
                 add(distance);
 
                 getline(file, line, '\n'); //this is for reading the \n character into dummy variable.
@@ -72,8 +75,8 @@ int main(int argc, char const *argv[])
     }
 
     cout << "The number of taxi additions: " << op_add << " and distance updates: " << op_update << endl;
-    int i = 0;
 
+    int i = 0;
     // Priority queue before extracting max
     cout << "Priority Queue : ";
     while (i <= size)
