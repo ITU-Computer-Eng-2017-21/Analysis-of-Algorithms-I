@@ -2,8 +2,12 @@
 #include <fstream>
 #include <string>
 
+#include <sstream>
+#include <math.h>
+
 using namespace std;
 #include "pq.cpp"
+//#include "pq_array.cpp"
 // Driver Code
 int main()
 {
@@ -23,7 +27,46 @@ int main()
 
     // Insert the element to the
     // priority queue
-    insert(45);
+
+    ifstream file;
+    file.open("Homework2/Solution/locations.txt");
+
+    if (!file)
+    {
+        cerr << "File cannot be opened!";
+        exit(1);
+    }
+
+    string line;
+    getline(file, line);
+
+    float p = 0.8;
+    int M = 100;
+
+    for (int z = 0; z < M; z++)
+    {
+        int ratio = p * 100;
+        int r = rand() % 100;
+
+        if (r < ratio)
+        {
+            int x = rand() % size;
+            update(x, Heap[x] - 0.01);
+        }
+        else
+        {
+            float longitude, latitude;
+            file >> longitude;
+            file >> latitude;
+
+            float distance = sqrt(longitude * longitude + latitude * latitude);
+            insert(distance);
+
+            getline(file, line, '\n'); //this is for reading the \n character into dummy variable.
+        }
+    }
+
+    /*insert(45);
     insert(20);
     insert(14);
     insert(12);
@@ -31,7 +74,7 @@ int main()
     insert(7);
     insert(11);
     insert(13);
-    insert(7);
+    insert(7);*/
 
     int i = 0;
 
@@ -39,7 +82,7 @@ int main()
     cout << "Priority Queue : ";
     while (i <= size)
     {
-        cout << H[i] << " ";
+        cout << Heap[i] << " ";
         i++;
     }
 
@@ -55,7 +98,7 @@ int main()
     int j = 0;
     while (j <= size)
     {
-        cout << H[j] << " ";
+        cout << Heap[j] << " ";
         j++;
     }
 
@@ -69,7 +112,7 @@ int main()
     int k = 0;
     while (k <= size)
     {
-        cout << H[k] << " ";
+        cout << Heap[k] << " ";
         k++;
     }*/
 
@@ -82,17 +125,16 @@ int main()
     int l = 0;
     while (l <= size)
     {
-        cout << H[l] << " ";
+        cout << Heap[l] << " ";
         l++;
-    }
-    */
+    }*/
 
     //cout << "\n" << endl;
 
-    for (int i = 0; i < 7; i++)
+    /*for (int i = 0; i < 8; i++)
     {
         cout << extractMax() << endl;
-    }
+    }*/
 
     return 0;
 }
