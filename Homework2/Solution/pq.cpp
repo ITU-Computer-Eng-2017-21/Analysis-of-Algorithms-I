@@ -3,9 +3,10 @@
 // binary heap
 
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
-int H[50];
+vector<float> Heap;
 int size = -1;
 
 // Function to return the index of the
@@ -36,11 +37,11 @@ int rightChild(int i)
 // to maintain the heap property
 void shiftUp(int i)
 {
-    while (i > 0 && H[parent(i)] > H[i])
+    while (i > 0 && Heap[parent(i)] > Heap[i])
     {
 
         // Swap parent and current node
-        swap(H[parent(i)], H[i]);
+        swap(Heap[parent(i)], Heap[i]);
 
         // Update i to parent of i
         i = parent(i);
@@ -56,7 +57,7 @@ void shiftDown(int i)
     // Left Child
     int l = leftChild(i);
 
-    if (l <= size && H[l] < H[maxIndex])
+    if (l <= size && Heap[l] < Heap[maxIndex])
     {
         maxIndex = l;
     }
@@ -64,7 +65,7 @@ void shiftDown(int i)
     // Right Child
     int r = rightChild(i);
 
-    if (r <= size && H[r] < H[maxIndex])
+    if (r <= size && Heap[r] < Heap[maxIndex])
     {
         maxIndex = r;
     }
@@ -72,7 +73,7 @@ void shiftDown(int i)
     // If i not same as maxIndex
     if (i != maxIndex)
     {
-        swap(H[i], H[maxIndex]);
+        swap(Heap[i], Heap[maxIndex]);
         shiftDown(maxIndex);
     }
 }
@@ -82,8 +83,7 @@ void shiftDown(int i)
 void insert(int p)
 {
     size = size + 1;
-    H[size] = p;
-
+    Heap.push_back(p);
     // Shift Up to maintain heap property
     shiftUp(size);
 }
@@ -92,11 +92,11 @@ void insert(int p)
 // maximum priority
 int extractMax()
 {
-    int result = H[0];
+    int result = Heap[0];
 
     // Replace the value at the root
     // with the last leaf
-    H[0] = H[size];
+    Heap[0] = Heap[size];
     size = size - 1;
 
     // Shift down the replaced element
@@ -107,10 +107,10 @@ int extractMax()
 
 // Function to change the priority
 // of an element
-void changePriority(int i, int p)
+void update(int i, int p)
 {
-    int oldp = H[i];
-    H[i] = p;
+    int oldp = Heap[i];
+    Heap[i] = p;
 
     if (p < oldp)
     {
@@ -124,17 +124,17 @@ void changePriority(int i, int p)
 
 // Function to get value of the current
 // maximum element
-int getMax()
+/*int getMax()
 {
 
-    return H[0];
-}
+    return Heap[0];
+}*/
 
 // Function to remove the element
 // located at given index
-void remove(int i)
+/*void remove(int i)
 {
-    H[i] = getMax() + 1;
+    Heap[i] = getMax() + 1;
 
     // Shift the node to the root
     // of the heap
@@ -142,4 +142,4 @@ void remove(int i)
 
     // Extract the node
     extractMax();
-}
+}*/
