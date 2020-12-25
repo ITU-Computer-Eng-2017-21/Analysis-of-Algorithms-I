@@ -1,119 +1,106 @@
-// C++ code to implement priority-queue
-// using array implementation of
-// binary heap
+// priority-queue using vector implementation of binary heap
 
 #include <bits/stdc++.h>
 #include <vector>
 using namespace std;
 
-vector<double> Heap;
+vector<double> taxi;
 int size = -1;
 
-// Function to return the index of the
-// parent node of a given node
+// Function to return the index of the parent node of a given node
 int parent(int i)
 {
     return (i - 1) / 2;
 }
 
-// Function to return the index of the
-// left child of the given node
+// Function to return the index of the left child of the given node
 int leftChild(int i)
 {
     return ((2 * i) + 1);
 }
 
-// Function to return the index of the
-// right child of the given node
+// Function to return the index of the right child of the given node
 int rightChild(int i)
 {
     return ((2 * i) + 2);
 }
 
-// Function to shift up the node in order
-// to maintain the heap property
+// Function to shift up the node in order to maintain the heap property
 void shiftUp(int i)
 {
-    while (i > 0 && Heap[parent(i)] > Heap[i])
+    while (i > 0 && taxi[parent(i)] > taxi[i])
     {
 
         // Swap parent and current node
-        swap(Heap[parent(i)], Heap[i]);
+        swap(taxi[parent(i)], taxi[i]);
 
         // Update i to parent of i
         i = parent(i);
     }
 }
 
-// Function to shift down the node in
-// order to maintain the heap property
+// Function to shift down the node in order to maintain the heap property
 void shiftDown(int i)
 {
-    int maxIndex = i;
+    int current = i;
 
     // Left Child
     int l = leftChild(i);
 
-    if (l <= size && Heap[l] < Heap[maxIndex])
+    if (l <= size && taxi[l] < taxi[current])
     {
-        maxIndex = l;
+        current = l;
     }
 
     // Right Child
     int r = rightChild(i);
 
-    if (r <= size && Heap[r] < Heap[maxIndex])
+    if (r <= size && taxi[r] < taxi[current])
     {
-        maxIndex = r;
+        current = r;
     }
 
-    // If i not same as maxIndex
-    if (i != maxIndex)
+    // If i not same as current
+    if (i != current)
     {
-        swap(Heap[i], Heap[maxIndex]);
-        shiftDown(maxIndex);
+        swap(taxi[i], taxi[current]);
+        shiftDown(current);
     }
 }
 
-// Function to insert a new element
-// in the Binary Heap
+// Function to add a new taxi in the binary heap
 void add(double p)
 {
     size = size + 1;
-    Heap.push_back(p);
+    taxi.push_back(p);
     // Shift Up to maintain heap property
     shiftUp(size);
 }
 
-// Function to extract the element with
-// maximum priority
-double callTaxi()
+// Function to call the element with maximum priority
+double call()
 {
-    double result = Heap[0];
+    double result = taxi[0];
 
-    // Replace the value at the root
-    // with the last leaf
-    //Heap[0] = Heap[size];
-    swap(Heap[0], Heap[size]);
-    Heap.pop_back();
+    // Replace the value at the root with the last leaf
+    swap(taxi[0], taxi[size]);
+    taxi.pop_back();
     size = size - 1;
 
-    // Shift down the replaced element
-    // to maintain the heap property
+    // Shift down the replaced element to maintain the heap property
     shiftDown(0);
 
     return result;
 }
 
-// Function to change the priority
-// of an element
-void update(int i, double p)
+// Function to update the distance of an taxi
+void update(int i, double new_distance)
 {
 
-    float oldp = Heap[i];
-    Heap[i] = p;
+    float old_distance = taxi[i];
+    taxi[i] = new_distance;
 
-    if (p < oldp)
+    if (new_distance < old_distance)
     {
         shiftUp(i);
     }
