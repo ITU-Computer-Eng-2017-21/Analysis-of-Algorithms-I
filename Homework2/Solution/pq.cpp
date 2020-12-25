@@ -80,7 +80,7 @@ void add(double p)
 // Function to call the element with maximum priority
 double call()
 {
-    double result = taxi[0];
+    double called = taxi[0];
 
     // Replace the value at the root with the last leaf
     swap(taxi[0], taxi[size]);
@@ -90,22 +90,13 @@ double call()
     // Shift down the replaced element to maintain the heap property
     shiftDown(0);
 
-    return result;
+    return called;
 }
 
 // Function to update the distance of an taxi
-void update(int i, double new_distance)
+void update(int i)
 {
 
-    float old_distance = taxi[i];
-    taxi[i] = new_distance;
-
-    if (new_distance < old_distance)
-    {
-        shiftUp(i);
-    }
-    else
-    {
-        shiftDown(i);
-    }
+    taxi[i] = taxi[i] - 0.01;
+    shiftUp(i);
 }
