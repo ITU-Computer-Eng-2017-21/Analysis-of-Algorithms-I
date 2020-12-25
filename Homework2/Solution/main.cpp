@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
                 {              // when program cannot update if head is empty
                     int x = rand() % taxi.size();
                     {
-                        update(x, taxi[x] - 0.01);
+                        update(x);
                     }
                 }
                 op_update++;
@@ -79,7 +79,8 @@ int main(int argc, char const *argv[])
 
     cout << "Total running time is: " << duration.count() << " milliseconds." << endl;
 
-    /*for (int i = 0; i < taxi.size(); i++)
+    /*int sz = taxi.size(); // debugging
+    for (int i = 0; i < sz; i++)
     {
         cout << call() << endl;
     }*/
