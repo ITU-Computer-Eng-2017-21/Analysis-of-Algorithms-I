@@ -1,7 +1,7 @@
-## Compile
+- Compile
 
 g++ -std=c++11 main.cpp
 
-## Run
+- Run
 
-./a.out m p (./a.out 10 0.01)
+./a.out m p (./a.out 1000 0.2)
