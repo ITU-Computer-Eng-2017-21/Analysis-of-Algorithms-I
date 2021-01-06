@@ -3,12 +3,7 @@ This code is adopted from the code provided by Dinesh Khandelwal in comments **/
 #include <bits/stdc++.h>
 using namespace std;
 
-enum Color
-{
-    RED,
-    BLACK
-};
-
+bool superPosition = false;
 class player
 {
 private:
@@ -18,7 +13,7 @@ public:
     int Rebound;
     int Assist;
     int Point;
-    bool color;
+    string color;
     player *left, *right, *parent;
     player(string, int, int, int);
     ~player();
@@ -31,7 +26,7 @@ player::player(string newName, int newRebound, int newAssist, int newPoint)
     this->Assist = newAssist;
     this->Point = newPoint;
     left = right = parent = NULL;
-    this->color = RED;
+    this->color = "RED";
 }
 
 player::~player()
@@ -53,6 +48,7 @@ public:
     RBTree() { root = NULL; }
     void insert(const string &, const int &, const int &, const int &);
     void preorder();
+    void update(player *);
 };
 
 // A recursive function to do preorder traversal
@@ -82,6 +78,15 @@ player *BSTInsert(player *root, player *pt)
     {
         root->right = BSTInsert(root->right, pt);
         root->right->parent = root;
+    }
+    else if (pt->Name == root->Name)
+    {
+        root->Rebound = root->Rebound + pt->Rebound;
+        root->Assist = root->Assist + pt->Assist;
+        root->Point = root->Point + pt->Point;
+
+        pt = root;
+        superPosition = true;
     }
 
     /* return the (unchanged) node pointer */
@@ -142,7 +147,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
     player *parent_pt = NULL;
     player *grand_parent_pt = NULL;
 
-    while ((pt != root) && (pt->color != BLACK) && (pt->parent->color == RED))
+    while ((pt != root) && (pt->color != "BLACK") && (pt->parent->color == "RED"))
     {
 
         parent_pt = pt->parent;
@@ -155,12 +160,11 @@ void RBTree::fixViolation(player *&root, player *&pt)
             player *uncle_pt = grand_parent_pt->right;
 
             /* Case : 1 The uncle of pt is also red Only Recoloring required */
-            if (uncle_pt != NULL && uncle_pt->color ==
-                                        RED)
+            if (uncle_pt != NULL && uncle_pt->color == "RED")
             {
-                grand_parent_pt->color = RED;
-                parent_pt->color = BLACK;
-                uncle_pt->color = BLACK;
+                grand_parent_pt->color = "RED";
+                parent_pt->color = "BLACK";
+                uncle_pt->color = "BLACK";
                 pt = grand_parent_pt;
             }
 
@@ -189,11 +193,11 @@ void RBTree::fixViolation(player *&root, player *&pt)
             player *uncle_pt = grand_parent_pt->left;
 
             /* Case : 1 The uncle of pt is also red Only Recoloring required */
-            if ((uncle_pt != NULL) && (uncle_pt->color == RED))
+            if ((uncle_pt != NULL) && (uncle_pt->color == "RED"))
             {
-                grand_parent_pt->color = RED;
-                parent_pt->color = BLACK;
-                uncle_pt->color = BLACK;
+                grand_parent_pt->color = "RED";
+                parent_pt->color = "BLACK";
+                uncle_pt->color = "BLACK";
                 pt = grand_parent_pt;
             }
             else
@@ -215,7 +219,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
         }
     }
 
-    root->color = BLACK;
+    root->color = "BLACK";
 }
 
 // Function to insert a new node with given data
@@ -225,9 +229,12 @@ void RBTree::insert(const string &Name, const int &Rebound, const int &Assist, c
 
     // Do a normal BST insert
     root = BSTInsert(root, pt);
-
     // fix Red Black Tree violations
-    fixViolation(root, pt);
+    if (!superPosition)
+    {
+        fixViolation(root, pt);
+    }
+    superPosition = false;
 }
 
 // Function to do preorder traversal
@@ -254,21 +261,21 @@ int main()
     tree.insert("Berk Ugurlu", 1, 2, 2);
     tree.insert("Egehan Arna", 0, 0, 0);
     tree.insert("Yordan Minchev", 2, 0, 0);
-    //tree.insert("Jan Vesely", 174, 53, 424);
-    //tree.insert("Brad Wanamaker", 97, 138, 408);
-    //tree.insert("Kostas S l o u k a s", 87, 188, 351);
-    //tree.insert("G i g i Datome", 117, 38, 336);
-    //tree.insert("Nico l o M e l l i", 179, 62, 320);
-    //tree.insert("James Nunnally", 59, 39, 269);
-    //tree.insert("Marko Guduric", 56, 69, 241);
-    //tree.insert("Jason Thompson", 140, 30, 180);
-    //tree.insert("A l i Muhammed", 23, 25, 146);
-    //tree.insert("N i k o l a K a l i n i c", 30, 23, 104);
-    //tree.insert("Ahmet D u v e r i o g l u", 48, 14, 90);
-    //tree.insert("Melih Mahmutoglu", 10, 5, 35);
-    //tree.insert("Sinan Guler", 9, 7, 23);
-    //tree.insert("Egehan Arna", 0, 1, 2);
-    //tree.insert("B a r i s Hersek", 0, 0, 0);
+    tree.insert("Jan Vesely", 174, 53, 424);
+    tree.insert("Brad Wanamaker", 97, 138, 408);
+    tree.insert("Kostas Sloukas", 87, 188, 351);
+    tree.insert("Gigi Datome", 117, 38, 336);
+    tree.insert("Nicolo Melli", 179, 62, 320);
+    tree.insert("James Nunnally", 59, 39, 269);
+    tree.insert("Marko Guduric", 56, 69, 241);
+    tree.insert("Jason Thompson", 140, 30, 180);
+    tree.insert("Ali Muhammed", 23, 25, 146);
+    tree.insert("Nikola Kalinic", 30, 23, 104);
+    tree.insert("Ahmet Duverioglu", 48, 14, 90);
+    tree.insert("Melih Mahmutoglu", 10, 5, 35);
+    tree.insert("Sinan Guler", 9, 7, 23);
+    tree.insert("Egehan Arna", 0, 1, 2);
+    tree.insert("Baris Hersek", 0, 0, 0);
     cout << "Inoder Traversal of Created Tree\n";
     tree.preorder();
 
