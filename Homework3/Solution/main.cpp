@@ -29,14 +29,15 @@ player::player(string newName, int newRebound, int newAssist, int newPoint)
     this->color = "RED";
 }
 
-player::~player()
-{
-}
+player::~player() {}
 // Class to represent Red-Black Tree
 class RBTree
 {
 private:
     player *root;
+    player *maxList[3];
+    player *maxAssist;
+    player *maxPoint;
 
 protected:
     void rotateLeft(player *&, player *&);
@@ -45,10 +46,15 @@ protected:
 
 public:
     // Constructor
-    RBTree() { root = NULL; }
+    RBTree()
+    {
+        root = maxAssist = maxPoint = NULL;
+        *maxList = NULL;
+    }
     void insert(const string &, const int &, const int &, const int &);
     void preorder();
-    void update(player *);
+    player **max(player *);
+    player *getRoot() { return root; }
 };
 
 // A recursive function to do preorder traversal
@@ -59,6 +65,38 @@ void preorderHelper(player *root)
     cout << root->Name << " " << root->Rebound << " " << root->Assist << " " << root->Point << endl;
     preorderHelper(root->left);
     preorderHelper(root->right);
+}
+
+player **RBTree::max(player *root)
+{
+    if (*maxList == NULL)
+    {
+        maxList[0] = root;
+        maxList[1] = root;
+        maxList[2] = root;
+    }
+    if (!root)
+    {
+        return maxList;
+    }
+
+    if (root->Rebound > maxList[0]->Rebound)
+    {
+        maxList[0] = root;
+    }
+    if (root->Assist > maxList[0]->Assist)
+    {
+        maxList[1] = root;
+    }
+    if (root->Point > maxList[0]->Point)
+    {
+        maxList[2] = root;
+    }
+
+    max(root->left);
+    max(root->right);
+
+    return maxList;
 }
 
 /* A utility function to insert a new node with given key in BST */
@@ -278,6 +316,11 @@ int main()
     tree.insert("Baris Hersek", 0, 0, 0);
     cout << "Inoder Traversal of Created Tree\n";
     tree.preorder();
+
+    player **x = tree.max(tree.getRoot());
+    cout << x[0]->Name << " " << x[0]->Rebound << endl;
+    cout << x[1]->Name << " " << x[1]->Assist << endl;
+    cout << x[2]->Name << " " << x[2]->Point << endl;
 
     return 0;
 }
