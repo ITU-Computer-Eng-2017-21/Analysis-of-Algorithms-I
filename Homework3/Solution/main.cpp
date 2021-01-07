@@ -90,11 +90,11 @@ player **RBTree::max(player *root)
     {
         maxList[0] = root;
     }
-    if (root->Assist > maxList[0]->Assist)
+    if (root->Assist > maxList[1]->Assist)
     {
         maxList[1] = root;
     }
-    if (root->Point > maxList[0]->Point)
+    if (root->Point > maxList[2]->Point)
     {
         maxList[2] = root;
     }
@@ -300,17 +300,14 @@ int main()
     getline(file, line); // header line
     //Season , Name , Team , Rebound , Assist , Point
     RBTree tree;
-    string oldSeason, Season, Name, Team;
-    int Rebound = 0, Assist = 0, Point = 0;
+    string oldSeason = "", Season, Name, Team;
+    int Rebound = 0, Assist = 0, Point = 0, i = 0;
 
-    getline(file, oldSeason, ',');
-    do
+    while (!file.eof())
     {
+        getline(file, Season, ',');
         getline(file, Name, ',');
         getline(file, Team, ',');
-        /*cin >> Rebound;
-        cin >> Assist;
-        cin >> Point;*/
         getline(file, Team, ',');
         Rebound = stoi(Team);
         getline(file, Team, ',');
@@ -318,50 +315,27 @@ int main()
         getline(file, Team, '\n');
         Point = stoi(Team);
         //getline(file, line, '\n'); // this is for reading the \n character into dummy variable.
+
+        if (oldSeason != Season || file.eof())
+        {
+            if (i >= 1)
+            {
+                player **x = tree.max(tree.getRoot());
+                cout << "End of the " << oldSeason << " Season" << endl;
+                cout << "Max Points:  " << x[2]->Point << " - Player Name: " << x[2]->Name << endl;
+                cout << "Max Assists:  " << x[1]->Assist << " - Player Name: " << x[1]->Name << endl;
+                cout << "Max Rebs:  " << x[0]->Rebound << " - Player Name: " << x[0]->Name << endl;
+            }
+            if (i == 1)
+            {
+                preorderHelper(tree.getRoot(), 0);
+            }
+
+            i++;
+        }
+        oldSeason = Season;
         tree.insert(Name, Rebound, Assist, Point);
-        getline(file, Season, ',');
-
-    } while (oldSeason == Season);
-    cout << "Inoder Traversal of Created Tree\n";
-    preorderHelper(tree.getRoot(), 0);
-
-    player **x = tree.max(tree.getRoot());
-    cout << "End of the " << oldSeason << " Season" << endl;
-    cout << "Max Points:  " << x[2]->Point << " - Player Name: " << x[2]->Name << endl;
-    cout << "Max Assists:  " << x[1]->Assist << " - Player Name: " << x[1]->Name << endl;
-    cout << "Max Rebs:  " << x[0]->Rebound << " - Player Name: " << x[0]->Name << endl;
-
-    /*tree.insert("Ali Muhammed", 93, 106, 386);
-    tree.insert("Ekpe Udoh", 241, 68, 376);
-    tree.insert("Jan Vesely", 154, 49, 328);
-    tree.insert("Bogdan Bogdanovic", 84, 80, 321);
-    tree.insert("Gigi Datome", 122, 35, 303);
-    tree.insert("Kostas Sloukas", 62, 130, 268);
-    tree.insert("Nikola Kalinic", 101, 51, 249);
-    tree.insert("James Nunnally", 67, 58, 192);
-    tree.insert("Pero Antic", 75, 19, 130);
-    tree.insert("Melih Mahmutoglu", 10, 11, 79);
-    tree.insert("Ahmet Duverioglu", 12, 1, 30);
-    tree.insert("Anthony Bennett", 9, 2, 12);
-    tree.insert("Baris Hersek", 0, 0, 4);
-    tree.insert("Berk Ugurlu", 1, 2, 2);
-    tree.insert("Egehan Arna", 0, 0, 0);
-    tree.insert("Yordan Minchev", 2, 0, 0);
-    tree.insert("Jan Vesely", 174, 53, 424);
-    tree.insert("Brad Wanamaker", 97, 138, 408);
-    tree.insert("Kostas Sloukas", 87, 188, 351);
-    tree.insert("Gigi Datome", 117, 38, 336);
-    tree.insert("Nicolo Melli", 179, 62, 320);
-    tree.insert("James Nunnally", 59, 39, 269);
-    tree.insert("Marko Guduric", 56, 69, 241);
-    tree.insert("Jason Thompson", 140, 30, 180);
-    tree.insert("Ali Muhammed", 23, 25, 146);
-    tree.insert("Nikola Kalinic", 30, 23, 104);
-    tree.insert("Ahmet Duverioglu", 48, 14, 90);
-    tree.insert("Melih Mahmutoglu", 10, 5, 35);
-    tree.insert("Sinan Guler", 9, 7, 23);
-    tree.insert("Egehan Arna", 0, 1, 2);
-    tree.insert("Baris Hersek", 0, 0, 0);*/
+    }
 
     return 0;
 }
