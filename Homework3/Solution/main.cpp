@@ -2,6 +2,9 @@
 This code is adopted from the code provided by Dinesh Khandelwal in comments **/
 #include <bits/stdc++.h>
 using namespace std;
+#include <string>
+#include <fstream>
+#include <sstream>
 
 bool superPosition = false;
 class player
@@ -50,19 +53,24 @@ public:
         *maxList = NULL;
     }
     void insert(const string &, const int &, const int &, const int &);
-    void preorder();
     player **max(player *);
     player *getRoot() { return root; }
 };
 
 // A recursive function to do preorder traversal
-void preorderHelper(player *root)
+void preorderHelper(player *root, int dashCounter)
 {
     if (root == NULL)
         return;
-    cout << root->Name << " " << root->Rebound << " " << root->Assist << " " << root->Point << endl;
-    preorderHelper(root->left);
-    preorderHelper(root->right);
+    for (int i = 0; i < dashCounter; i++)
+    {
+        cout << "-";
+    }
+
+    cout << "(" << root->color << ") " << root->Name << endl;
+    dashCounter++;
+    preorderHelper(root->left, dashCounter);
+    preorderHelper(root->right, dashCounter);
 }
 
 player **RBTree::max(player *root)
@@ -274,14 +282,56 @@ void RBTree::insert(const string &Name, const int &Rebound, const int &Assist, c
 }
 
 // Function to do preorder traversal
-void RBTree::preorder() { preorderHelper(root); }
+/*void RBTree::preorder() { preorderHelper(root); }*/
 
 // Driver Code
 int main()
 {
-    RBTree tree;
+    ifstream file;
+    file.open("Homework3/Solution/deneme.csv");
 
-    tree.insert("Ali Muhammed", 93, 106, 386);
+    if (!file)
+    {
+        cerr << "File cannot be opened!";
+        exit(1);
+    }
+
+    string line;
+    getline(file, line); // header line
+    //Season , Name , Team , Rebound , Assist , Point
+    RBTree tree;
+    string oldSeason, Season, Name, Team;
+    int Rebound = 0, Assist = 0, Point = 0;
+
+    getline(file, oldSeason, ',');
+    do
+    {
+        getline(file, Name, ',');
+        getline(file, Team, ',');
+        /*cin >> Rebound;
+        cin >> Assist;
+        cin >> Point;*/
+        getline(file, Team, ',');
+        Rebound = stoi(Team);
+        getline(file, Team, ',');
+        Assist = stoi(Team);
+        getline(file, Team, '\n');
+        Point = stoi(Team);
+        //getline(file, line, '\n'); // this is for reading the \n character into dummy variable.
+        tree.insert(Name, Rebound, Assist, Point);
+        getline(file, Season, ',');
+
+    } while (oldSeason == Season);
+    cout << "Inoder Traversal of Created Tree\n";
+    preorderHelper(tree.getRoot(), 0);
+
+    player **x = tree.max(tree.getRoot());
+    cout << "End of the " << oldSeason << " Season" << endl;
+    cout << "Max Points:  " << x[2]->Point << " - Player Name: " << x[2]->Name << endl;
+    cout << "Max Assists:  " << x[1]->Assist << " - Player Name: " << x[1]->Name << endl;
+    cout << "Max Rebs:  " << x[0]->Rebound << " - Player Name: " << x[0]->Name << endl;
+
+    /*tree.insert("Ali Muhammed", 93, 106, 386);
     tree.insert("Ekpe Udoh", 241, 68, 376);
     tree.insert("Jan Vesely", 154, 49, 328);
     tree.insert("Bogdan Bogdanovic", 84, 80, 321);
@@ -311,14 +361,7 @@ int main()
     tree.insert("Melih Mahmutoglu", 10, 5, 35);
     tree.insert("Sinan Guler", 9, 7, 23);
     tree.insert("Egehan Arna", 0, 1, 2);
-    tree.insert("Baris Hersek", 0, 0, 0);
-    cout << "Inoder Traversal of Created Tree\n";
-    tree.preorder();
-
-    player **x = tree.max(tree.getRoot());
-    cout << x[0]->Name << " " << x[0]->Rebound << endl;
-    cout << x[1]->Name << " " << x[1]->Assist << endl;
-    cout << x[2]->Name << " " << x[2]->Point << endl;
+    tree.insert("Baris Hersek", 0, 0, 0);*/
 
     return 0;
 }
