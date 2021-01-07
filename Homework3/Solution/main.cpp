@@ -36,8 +36,6 @@ class RBTree
 private:
     player *root;
     player *maxList[3];
-    player *maxAssist;
-    player *maxPoint;
 
 protected:
     void rotateLeft(player *&, player *&);
@@ -48,7 +46,7 @@ public:
     // Constructor
     RBTree()
     {
-        root = maxAssist = maxPoint = NULL;
+        root = NULL;
         *maxList = NULL;
     }
     void insert(const string &, const int &, const int &, const int &);
