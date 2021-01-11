@@ -1,12 +1,24 @@
-/** C++ implementation for Red-Black Tree Insertion 
-This code is adopted from the code provided by Dinesh Khandelwal in comments **/
-#include <bits/stdc++.h>
-using namespace std;
-#include <string>
-#include <fstream>
-#include <sstream>
+/*  
+    @author: Barış İncesu
+    @ID: 150170092
+    @date :11.01.2021
 
-bool superPosition = false;
+    ///////////////////////////
+
+    Compile:
+    g++ -std=c++11 150170092.cpp -o 150170092
+    Run:
+    ./150170092 euroleague.csv
+*/
+
+#include <iostream> // basic library for cout
+using namespace std;
+
+#include <string>  // string operation
+#include <fstream> // file operation
+#include <sstream> // string stream operaiton
+
+bool superPosition = false; // same name state
 class player
 {
 private:
@@ -16,10 +28,10 @@ public:
     int Rebound;
     int Assist;
     int Point;
-    string color;
+    string color; // "RED" , "BLACK"
     player *left, *right, *parent;
-    player(string, int, int, int);
-    ~player();
+    player(string, int, int, int); // Constructor
+    ~player();                     //Deconstructor
 };
 
 player::player(string newName, int newRebound, int newAssist, int newPoint)
@@ -28,8 +40,8 @@ player::player(string newName, int newRebound, int newAssist, int newPoint)
     this->Rebound = newRebound;
     this->Assist = newAssist;
     this->Point = newPoint;
-    left = right = parent = NULL;
-    this->color = "RED";
+    left = right = parent = NULL; // nulling arrows
+    this->color = "RED";          // new PLayer always starts with RED
 }
 
 player::~player() {}
@@ -38,7 +50,7 @@ class RBTree
 {
 private:
     player *root;
-    player *maxList[3];
+    player *maxList[3]; // keeps max statistics player *
 
 protected:
     void rotateLeft(player *&, player *&);
@@ -53,12 +65,12 @@ public:
         *maxList = NULL;
     }
     void insert(const string &, const int &, const int &, const int &);
-    player **max(player *);
+    player **max(player *); // return maxList
     player *getRoot() { return root; }
 };
 
-// A recursive function to do preorder traversal
-void preorderHelper(player *root, int dashCounter)
+// A recursive function to do print tree in preorder traversal
+void preorder(player *root, int dashCounter)
 {
     if (root == NULL)
         return;
@@ -69,17 +81,17 @@ void preorderHelper(player *root, int dashCounter)
 
     cout << "(" << root->color << ") " << root->Name << endl;
     dashCounter++;
-    preorderHelper(root->left, dashCounter);
-    preorderHelper(root->right, dashCounter);
+    preorder(root->left, dashCounter);
+    preorder(root->right, dashCounter);
 }
 
-player **RBTree::max(player *root)
+player **RBTree::max(player *root) // max statics
 {
     if (*maxList == NULL)
     {
-        maxList[0] = root;
-        maxList[1] = root;
-        maxList[2] = root;
+        maxList[0] = root; // keeps maxRebound
+        maxList[1] = root; // keeps maxAssist
+        maxList[2] = root; // keeps maxPoint
     }
     if (!root)
     {
@@ -98,7 +110,7 @@ player **RBTree::max(player *root)
     {
         maxList[2] = root;
     }
-
+    // recursive operation
     max(root->left);
     max(root->right);
 
@@ -108,11 +120,10 @@ player **RBTree::max(player *root)
 /* A utility function to insert a new node with given key in BST */
 player *BSTInsert(player *root, player *pt)
 {
-    /* If the tree is empty, return a new node */
+    // If the tree is empty
     if (root == NULL)
         return pt;
 
-    /* Otherwise, recur down the tree */
     if (pt->Name < root->Name)
     {
         root->left = BSTInsert(root->left, pt);
@@ -123,7 +134,7 @@ player *BSTInsert(player *root, player *pt)
         root->right = BSTInsert(root->right, pt);
         root->right->parent = root;
     }
-    else if (pt->Name == root->Name)
+    else if (pt->Name == root->Name) // update situation
     {
         root->Rebound = root->Rebound + pt->Rebound;
         root->Assist = root->Assist + pt->Assist;
@@ -133,7 +144,7 @@ player *BSTInsert(player *root, player *pt)
         superPosition = true;
     }
 
-    /* return the (unchanged) node pointer */
+    // return root
     return root;
 }
 
@@ -185,7 +196,7 @@ void RBTree::rotateRight(player *&root, player *&pt)
     pt->parent = pt_left;
 }
 
-// This function fixes violations caused by BST insertion
+// function fixes violations caused by insertion
 void RBTree::fixViolation(player *&root, player *&pt)
 {
     player *parent_pt = NULL;
@@ -203,7 +214,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
 
             player *uncle_pt = grand_parent_pt->right;
 
-            /* Case : 1 The uncle of pt is also red Only Recoloring required */
+            /* Case : A1 The uncle of pt is also red Only Recoloring required */
             if (uncle_pt != NULL && uncle_pt->color == "RED")
             {
                 grand_parent_pt->color = "RED";
@@ -214,7 +225,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
 
             else
             {
-                /* Case : 2 pt is right child of its parent Left-rotation required */
+                /* Case : A2-1 pt is right child of its parent Left-rotation required */
                 if (pt == parent_pt->right)
                 {
                     rotateLeft(root, parent_pt);
@@ -222,21 +233,19 @@ void RBTree::fixViolation(player *&root, player *&pt)
                     parent_pt = pt->parent;
                 }
 
-                /* Case : 3 pt is left child of its parent Right-rotation required */
+                /* Case : A2 pt is left child of its parent Right-rotation required */
                 rotateRight(root, grand_parent_pt);
                 swap(parent_pt->color, grand_parent_pt->color);
                 pt = parent_pt;
             }
         }
 
-        /* Case : B 
-		Parent of pt is right child 
-		of Grand-parent of pt */
+        /* Case : B Parent of pt is right child of Grand-parent of pt */
         else
         {
             player *uncle_pt = grand_parent_pt->left;
 
-            /* Case : 1 The uncle of pt is also red Only Recoloring required */
+            /* Case : B1 The uncle of pt is also red Only Recoloring required */
             if ((uncle_pt != NULL) && (uncle_pt->color == "RED"))
             {
                 grand_parent_pt->color = "RED";
@@ -246,7 +255,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
             }
             else
             {
-                /* Case : 2 pt is left child of its parent Right-rotation required */
+                /* Case : B2-1 pt is left child of its parent Right-rotation required */
                 if (pt == parent_pt->left)
                 {
                     rotateRight(root, parent_pt);
@@ -254,8 +263,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
                     parent_pt = pt->parent;
                 }
 
-                /* Case : 3 
-				pt is right child of its parent Left-rotation required */
+                /* Case : B2 pt is right child of its parent Left-rotation required */
                 rotateLeft(root, grand_parent_pt);
                 swap(parent_pt->color, grand_parent_pt->color);
                 pt = parent_pt;
@@ -263,7 +271,7 @@ void RBTree::fixViolation(player *&root, player *&pt)
         }
     }
 
-    root->color = "BLACK";
+    root->color = "BLACK"; // always root be "BLACK"
 }
 
 // Function to insert a new node with given data
@@ -274,17 +282,13 @@ void RBTree::insert(const string &Name, const int &Rebound, const int &Assist, c
     // Do a normal BST insert
     root = BSTInsert(root, pt);
     // fix Red Black Tree violations
-    if (!superPosition)
+    if (!superPosition) // if there isnt update, there is insertion
     {
         fixViolation(root, pt);
     }
-    superPosition = false;
+    superPosition = false; //superPositon reset for new Player
 }
 
-// Function to do preorder traversal
-/*void RBTree::preorder() { preorderHelper(root); }*/
-
-// Driver Code
 int main(int argc, char const *argv[])
 {
     string file_name = argv[1];
@@ -300,9 +304,10 @@ int main(int argc, char const *argv[])
     string line;
     getline(file, line); // header line
     //Season , Name , Team , Rebound , Assist , Point
-    RBTree tree;
-    string oldSeason = "", Season, Name, Team;
+    RBTree tree;                               // tree created.
+    string oldSeason = "", Season, Name, Team; // input fields
     int Rebound = 0, Assist = 0, Point = 0, i = 0;
+    // i for just write first season tree model
 
     while (!file.eof())
     {
@@ -315,11 +320,10 @@ int main(int argc, char const *argv[])
         Assist = stoi(Team);
         getline(file, Team, '\n');
         Point = stoi(Team);
-        //getline(file, line, '\n'); // this is for reading the \n character into dummy variable.
 
-        if (oldSeason != Season || file.eof())
+        if (oldSeason != Season || file.eof()) // when season changes detected
         {
-            if (i >= 1)
+            if (i >= 1) // display statistics
             {
                 player **x = tree.max(tree.getRoot());
                 cout << "End of the " << oldSeason << " Season" << endl;
@@ -327,15 +331,15 @@ int main(int argc, char const *argv[])
                 cout << "Max Assists:  " << x[1]->Assist << " - Player Name: " << x[1]->Name << endl;
                 cout << "Max Rebs:  " << x[0]->Rebound << " - Player Name: " << x[0]->Name << endl;
             }
-            if (i == 1)
+            if (i == 1) // first season tree printed
             {
-                preorderHelper(tree.getRoot(), 0);
+                preorder(tree.getRoot(), 0);
             }
 
             i++;
         }
-        oldSeason = Season;
-        tree.insert(Name, Rebound, Assist, Point);
+        oldSeason = Season;                        // oldSeason and Season compare for season changes detection
+        tree.insert(Name, Rebound, Assist, Point); // insert new PLayer to RBTree
     }
 
     return 0;
