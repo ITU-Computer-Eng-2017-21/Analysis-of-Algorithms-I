@@ -285,10 +285,11 @@ void RBTree::insert(const string &Name, const int &Rebound, const int &Assist, c
 /*void RBTree::preorder() { preorderHelper(root); }*/
 
 // Driver Code
-int main()
+int main(int argc, char const *argv[])
 {
+    string file_name = argv[1];
     ifstream file;
-    file.open("deneme.csv");
+    file.open(file_name);
 
     if (!file)
     {
