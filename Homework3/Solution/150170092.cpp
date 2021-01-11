@@ -288,7 +288,7 @@ void RBTree::insert(const string &Name, const int &Rebound, const int &Assist, c
 int main()
 {
     ifstream file;
-    file.open("Homework3/Solution/deneme.csv");
+    file.open("deneme.csv");
 
     if (!file)
     {
