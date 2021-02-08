@@ -34,7 +34,7 @@ public:
     // A utility function to insert a new key in the subtree rooted with
     // this node. The assumption is, the node must be non-full when this
     // function is called
-    void insertNonFull(box &k);
+    void insertNonFull(const box &k);
 
     // A utility function to split the child y of this node. i is index of y in
     // child array C[]. The Child y must be full when this function is called
@@ -83,7 +83,7 @@ public:
     }
 
     // The main function that inserts a new key in this B-Tree
-    void insert(box &k);
+    void insert(const box &k);
 };
 
 void BTree::prefixorder(BTreeNode *r)
@@ -126,21 +126,21 @@ BTreeNode::BTreeNode(int t1, bool leaf1)
 // Function to traverse all nodes in a subtree rooted with this node
 /*void BTreeNode::traverse()
 {
-	// There are n keys and n+1 children, traverse through n keys
-	// and first n children
-	int i;
-	for (i = 0; i < n; i++)
-	{
-		// If this is not leaf, then before printing key[i],
-		// traverse the subtree rooted with child C[i].
-		if (leaf == false)
-			C[i]->traverse();
-		cout << " " << keys[i];
-	}
+    // There are n keys and n+1 children, traverse through n keys
+    // and first n children
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        // If this is not leaf, then before printing key[i],
+        // traverse the subtree rooted with child C[i].
+        if (leaf == false)
+            C[i]->traverse();
+        cout << " " << keys[i];
+    }
 
-	// Print the subtree rooted with last child
-	if (leaf == false)
-		C[i]->traverse();
+    // Print the subtree rooted with last child
+    if (leaf == false)
+        C[i]->traverse();
 }*/
 
 // Function to search key k in subtree rooted with this node
@@ -164,8 +164,9 @@ BTreeNode *BTreeNode::search(box &k)
 }
 
 // The main function that inserts a new key in this B-Tree
-void BTree::insert(box &k)
+void BTree::insert(const box &k)
 {
+    box *new_box = new box(12, 21, 'g');
     // If tree is empty
     if (root == NULL)
     {
@@ -206,7 +207,7 @@ void BTree::insert(box &k)
 // A utility function to insert a new key in this node
 // The assumption is, the node must be non-full when this
 // function is called
-void BTreeNode::insertNonFull(box &k)
+void BTreeNode::insertNonFull(const box &k)
 {
     // Initialize index as index of rightmost element
     int i = n - 1;
@@ -295,11 +296,30 @@ void BTreeNode::splitChild(int i, BTreeNode *y)
 // Driver program to test above functions
 int main()
 {
-    char state = 'z';
+    int loop;
+    int degree;
+    char state;
 
-    box *newbox;
-    newbox = new box(56, 34, 'G');
+    cin >> loop;
+    cin >> degree;
+    cin >> state;
 
+    BTree t(degree); // A B-Tree with minium degree 3
+
+    for (int i = 0; i < loop; i++)
+    {
+        int x;
+        int y;
+        char z;
+        cin >> x;
+        cin >> y;
+        cin >> z;
+        box *newbox;
+        newbox = new box(x, y, z);
+        t.insert(*newbox);
+    }
+
+    /*
     box box1 = box(56, 34, 'G');
     box box2 = box(71, 6, 'M');
     box box3 = box(68, 0, 'P');
@@ -321,9 +341,10 @@ int main()
     box box19 = box(8, 2, 'V');
     box box20 = box(62, 9, 'Y');
     box box21 = box(9, 5, 'Z');
-
-    BTree t(3); // A B-Tree with minium degree 3
-    //t.insert(newbox);
+    */
+    //t.insert(*newbox);
+    //t.insert(box(56, 21, 'g'));
+    /*
     t.insert(box1);
     t.insert(box2);
     t.insert(box3);
@@ -345,7 +366,7 @@ int main()
     t.insert(box19);
     t.insert(box20);
     t.insert(box21);
-
+    */
     //cout << "Traversal of the constucted tree is ";
     t.prefixorder(t.getRoot());
 
