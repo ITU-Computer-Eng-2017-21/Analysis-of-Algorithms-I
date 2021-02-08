@@ -2,6 +2,29 @@
 #include <iostream>
 using namespace std;
 
+class box
+{
+private:
+    /* data */
+public:
+    int x;
+    int y;
+    char z;
+    box(int, int, char);
+    ~box();
+};
+
+box::box(int x, int y, char z)
+{
+    x = x;
+    y = y;
+    z = z;
+}
+
+box::~box()
+{
+}
+
 // A BTree node
 class BTreeNode
 {
