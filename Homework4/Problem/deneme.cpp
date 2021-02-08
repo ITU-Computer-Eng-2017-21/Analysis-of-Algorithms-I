@@ -35,6 +35,8 @@ public:
     // this node. The assumption is, the node must be non-full when this
     // function is called
     void insertNonFull(const box &k);
+    void insertNonFullx(const box &k);
+    void insertNonFully(const box &k);
 
     // A utility function to split the child y of this node. i is index of y in
     // child array C[]. The Child y must be full when this function is called
@@ -44,7 +46,9 @@ public:
     //void traverse();
 
     // A function to search a key in the subtree rooted with this node.
-    BTreeNode *search(box &k); // returns NULL if k is not present.
+    BTreeNode *search(box &k);  // returns NULL if k is not present.
+    BTreeNode *searchx(box &k); // returns NULL if k is not present.
+    BTreeNode *searchy(box &k); // returns NULL if k is not present.
 
     // Make BTree friend of this so that we can access private members of this
     // class in BTree functions
@@ -81,9 +85,19 @@ public:
     {
         return (root == NULL) ? NULL : root->search(k);
     }
+    BTreeNode *searchx(box &k)
+    {
+        return (root == NULL) ? NULL : root->searchx(k);
+    }
+    BTreeNode *searchy(box &k)
+    {
+        return (root == NULL) ? NULL : root->searchy(k);
+    }
 
     // The main function that inserts a new key in this B-Tree
     void insert(const box &k);
+    void insertx(const box &k);
+    void inserty(const box &k);
 };
 
 void BTree::prefixorder(BTreeNode *r)
@@ -163,6 +177,44 @@ BTreeNode *BTreeNode::search(box &k)
     return C[i]->search(k);
 }
 
+BTreeNode *BTreeNode::searchx(box &k)
+{
+    // Find the first key greater than or equal to k
+    int i = 0;
+    while (i < n && k.x > keys[i].x)
+        i++;
+
+    // If the found key is equal to k, return this node
+    if (keys[i].x == k.x)
+        return this;
+
+    // If key is not found here and this is a leaf node
+    if (leaf == true)
+        return NULL;
+
+    // Go to the appropriate child
+    return C[i]->search(k);
+}
+
+BTreeNode *BTreeNode::searchy(box &k)
+{
+    // Find the first key greater than or equal to k
+    int i = 0;
+    while (i < n && k.y > keys[i].y)
+        i++;
+
+    // If the found key is equal to k, return this node
+    if (keys[i].y == k.y)
+        return this;
+
+    // If key is not found here and this is a leaf node
+    if (leaf == true)
+        return NULL;
+
+    // Go to the appropriate child
+    return C[i]->search(k);
+}
+
 // The main function that inserts a new key in this B-Tree
 void BTree::insert(const box &k)
 {
@@ -200,6 +252,84 @@ void BTree::insert(const box &k)
         }
         else // If root is not full, call insertNonFull for root
             root->insertNonFull(k);
+    }
+}
+
+void BTree::insertx(const box &k)
+{
+    // If tree is empty
+    if (root == NULL)
+    {
+        // Allocate memory for root
+        root = new BTreeNode(t, true);
+        root->keys[0] = k; // Insert key
+        root->n = 1;       // Update number of keys in root
+    }
+    else // If tree is not empty
+    {
+        // If root is full, then tree grows in height
+        if (root->n == 2 * t - 1)
+        {
+            // Allocate memory for new root
+            BTreeNode *s = new BTreeNode(t, false);
+
+            // Make old root as child of new root
+            s->C[0] = root;
+
+            // Split the old root and move 1 key to the new root
+            s->splitChild(0, root);
+
+            // New root has two children now. Decide which of the
+            // two children is going to have new key
+            int i = 0;
+            if (s->keys[0].x < k.x)
+                i++;
+            s->C[i]->insertNonFullx(k);
+
+            // Change root
+            root = s;
+        }
+        else // If root is not full, call insertNonFull for root
+            root->insertNonFullx(k);
+    }
+}
+
+void BTree::inserty(const box &k)
+{
+    // If tree is empty
+    if (root == NULL)
+    {
+        // Allocate memory for root
+        root = new BTreeNode(t, true);
+        root->keys[0] = k; // Insert key
+        root->n = 1;       // Update number of keys in root
+    }
+    else // If tree is not empty
+    {
+        // If root is full, then tree grows in height
+        if (root->n == 2 * t - 1)
+        {
+            // Allocate memory for new root
+            BTreeNode *s = new BTreeNode(t, false);
+
+            // Make old root as child of new root
+            s->C[0] = root;
+
+            // Split the old root and move 1 key to the new root
+            s->splitChild(0, root);
+
+            // New root has two children now. Decide which of the
+            // two children is going to have new key
+            int i = 0;
+            if (s->keys[0].y < k.y)
+                i++;
+            s->C[i]->insertNonFully(k);
+
+            // Change root
+            root = s;
+        }
+        else // If root is not full, call insertNonFull for root
+            root->insertNonFully(k);
     }
 }
 
@@ -246,6 +376,92 @@ void BTreeNode::insertNonFull(const box &k)
                 i++;
         }
         C[i + 1]->insertNonFull(k);
+    }
+}
+
+void BTreeNode::insertNonFullx(const box &k)
+{
+    // Initialize index as index of rightmost element
+    int i = n - 1;
+
+    // If this is a leaf node
+    if (leaf == true)
+    {
+        // The following loop does two things
+        // a) Finds the location of new key to be inserted
+        // b) Moves all greater keys to one place ahead
+        while (i >= 0 && keys[i].x > k.x)
+        {
+            keys[i + 1] = keys[i];
+            i--;
+        }
+
+        // Insert the new key at found location
+        keys[i + 1] = k;
+        n = n + 1;
+    }
+    else // If this node is not leaf
+    {
+        // Find the child which is going to have the new key
+        while (i >= 0 && keys[i].x > k.x)
+            i--;
+
+        // See if the found child is full
+        if (C[i + 1]->n == 2 * t - 1)
+        {
+            // If the child is full, then split it
+            splitChild(i + 1, C[i + 1]);
+
+            // After split, the middle key of C[i] goes up and
+            // C[i] is splitted into two. See which of the two
+            // is going to have the new key
+            if (keys[i + 1].x < k.x)
+                i++;
+        }
+        C[i + 1]->insertNonFullx(k);
+    }
+}
+
+void BTreeNode::insertNonFully(const box &k)
+{
+    // Initialize index as index of rightmost element
+    int i = n - 1;
+
+    // If this is a leaf node
+    if (leaf == true)
+    {
+        // The following loop does two things
+        // a) Finds the location of new key to be inserted
+        // b) Moves all greater keys to one place ahead
+        while (i >= 0 && keys[i].y > k.y)
+        {
+            keys[i + 1] = keys[i];
+            i--;
+        }
+
+        // Insert the new key at found location
+        keys[i + 1] = k;
+        n = n + 1;
+    }
+    else // If this node is not leaf
+    {
+        // Find the child which is going to have the new key
+        while (i >= 0 && keys[i].y > k.y)
+            i--;
+
+        // See if the found child is full
+        if (C[i + 1]->n == 2 * t - 1)
+        {
+            // If the child is full, then split it
+            splitChild(i + 1, C[i + 1]);
+
+            // After split, the middle key of C[i] goes up and
+            // C[i] is splitted into two. See which of the two
+            // is going to have the new key
+            if (keys[i + 1].y < k.y)
+                i++;
+        }
+        C[i + 1]->insertNonFully(k);
     }
 }
 
@@ -304,18 +520,50 @@ int main()
     cin >> state;
 
     BTree t(degree); // A B-Tree with minium degree 3
-
-    for (int i = 0; i < loop; i++)
+    if (state == 'z')
     {
-        int x;
-        int y;
-        char z;
-        cin >> x;
-        cin >> y;
-        cin >> z;
-        box *newbox;
-        newbox = new box(x, y, z);
-        t.insert(*newbox);
+        for (int i = 0; i < loop; i++)
+        {
+            int x;
+            int y;
+            char z;
+            cin >> x;
+            cin >> y;
+            cin >> z;
+            box *newbox;
+            newbox = new box(x, y, z);
+            t.insert(*newbox);
+        }
+    }
+    else if (state == 'x')
+    {
+        for (int i = 0; i < loop; i++)
+        {
+            int x;
+            int y;
+            char z;
+            cin >> x;
+            cin >> y;
+            cin >> z;
+            box *newbox;
+            newbox = new box(x, y, z);
+            t.insertx(*newbox);
+        }
+    }
+    else if (state == 'y')
+    {
+        for (int i = 0; i < loop; i++)
+        {
+            int x;
+            int y;
+            char z;
+            cin >> x;
+            cin >> y;
+            cin >> z;
+            box *newbox;
+            newbox = new box(x, y, z);
+            t.inserty(*newbox);
+        }
     }
 
     /*
