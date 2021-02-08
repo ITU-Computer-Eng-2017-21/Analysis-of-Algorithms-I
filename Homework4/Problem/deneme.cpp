@@ -78,7 +78,7 @@ public:
         if (root != NULL)
             root->traverse();
     }*/
-    void prefixorder(BTreeNode *);
+    void prefixorder(BTreeNode *, int);
 
     // function to search a key in this tree
     BTreeNode *search(box &k)
@@ -100,7 +100,7 @@ public:
     void inserty(const box &k);
 };
 
-void BTree::prefixorder(BTreeNode *r)
+void BTree::prefixorder(BTreeNode *r, int d)
 {
     if (!r)
     {
@@ -113,11 +113,11 @@ void BTree::prefixorder(BTreeNode *r)
     cout << endl;
 
     int i = 0;
-    prefixorder(r->C[i]);
+    prefixorder(r->C[i], d);
 
-    for (int x = 0; x < 6; x++)
+    for (int x = 0; x < 2 * d; x++)
     {
-        prefixorder(r->C[++i]);
+        prefixorder(r->C[++i], d);
     }
 }
 
@@ -615,7 +615,7 @@ int main()
     t.insert(box21);
     */
     //cout << "Traversal of the constucted tree is ";
-    t.prefixorder(t.getRoot());
+    t.prefixorder(t.getRoot(), degree);
 
     /*int k = 6;
     (t.search(k) != NULL) ? cout << "\nPresent" : cout << "\nNot Present";
