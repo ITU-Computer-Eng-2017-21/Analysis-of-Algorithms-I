@@ -166,7 +166,6 @@ BTreeNode *BTreeNode::search(box &k)
 // The main function that inserts a new key in this B-Tree
 void BTree::insert(const box &k)
 {
-    box *new_box = new box(12, 21, 'g');
     // If tree is empty
     if (root == NULL)
     {
