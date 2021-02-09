@@ -148,7 +148,7 @@ public:
 
     // The main function that removes a new key in thie B-Tree
     void remove(const box &k);
-    box *deletesearch(BTreeNode *, int);
+    box *deletesearch(BTreeNode *, int, int);
 };
 
 BTreeNode::BTreeNode(int t1, bool leaf1)
@@ -597,29 +597,56 @@ void BTreeNode::splitChild(int i, BTreeNode *y)
         C[i]->traverse();
 }*/
 
-box *BTree::deletesearch(BTreeNode *r, int d)
+box *BTree::deletesearch(BTreeNode *r, int d, int degree)
 {
-    box *silinecek = NULL;
+    //box *silinecek;
+    //silinecek = &r->C[1]->keys[0];
+    //return silinecek;
+
+    BTreeNode *iter = r;
+    int i = 0;
+    while (d > iter->keys[i].x && i < iter->n)
+    {
+        i = i + 1;
+    }
+    if (iter->keys[i].x == d)
+    {
+        return &iter->keys[i];
+    }
+
+    iter = iter->C[i];
+    i = 0;
+    while (d > iter->keys[i].x && i < iter->n)
+    {
+        i = i + 1;
+    }
+    return &iter->keys[i];
+
+    /*
+
     if (!r)
     {
         return silinecek;
     }
+
     for (int i = 0; i < r->n; i++)
     {
         if (d == r->keys[i].x)
         {
-            silinecek = &r->keys[i];
+            box *silinecek = &r->keys[i];
             return silinecek;
         }
-    }
+    }*/
 
-    int i = 0;
-    deletesearch(r->C[i], d);
+    //int i = 0;
+    //deletesearch(r->C[i], d, degree);
 
-    for (int x = 0; x < 2 * d; x++)
-    {
-        deletesearch(r->C[++i], d);
-    }
+    //for (int x = 0; x < 2 * degree; x++)
+    //{
+    //deletesearch(r->C[++i], d, degree);
+    //}
+
+    return NULL;
 };
 
 void BTree::prefixorder(BTreeNode *r, int d)
@@ -630,8 +657,7 @@ void BTree::prefixorder(BTreeNode *r, int d)
     }
     for (int i = 0; i < r->n; i++)
     {
-        //cout << "(" << r->keys[i].x << "," << r->keys[i].y << "," << r->keys[i].z << ")";
-        cout << r->keys[i].x << endl;
+        cout << r->keys[i].x << "\t";
     }
     cout << endl;
 
@@ -694,61 +720,37 @@ void BTree::remove(const box &k)
 // Driver program to test above functions
 int main()
 {
+    int loop = 21;
+    int degree = 3;
+    BTree t(degree); // A B-5Tree with minium degree 3
 
-    BTree t(3); // A B-Tree with minium degree 3
-
-    box b1 = box(1);
+    box b1 = box(23);
     t.insert(b1);
-    box b2 = box(3);
-    t.insert(3);
-    box b3 = box(7);
+    box b2 = box(15);
+    t.insert(b2);
+    box b3 = box(76);
     t.insert(b3);
-    box b4 = box(10);
-    t.insert(10);
-    box b5 = box(11);
+    box b4 = box(45);
+    t.insert(b4);
+    box b5 = box(-5);
     t.insert(b5);
-    box b8 = box(13);
-    t.insert(b8);
-    //t.insert(14);
-    //t.insert(15);
-    //t.insert(18);
-    box b6 = box(16);
+    box b6 = box(-65);
     t.insert(b6);
-    //t.insert(19);
-    //t.insert(24);
-    //t.insert(25);
-    //t.insert(26);
-    box b7 = box(21);
-    t.insert(21);
-    //t.insert(4);
-    //t.insert(5);
-    //t.insert(20);
-    //t.insert(22);
-    //t.insert(2);
-    //t.insert(17);
-    //t.insert(12);
-    //t.insert(6);
+    box b7 = box(92);
+    t.insert(b7);
+    box b8 = box(56);
+    t.insert(b8);
+    box b9 = box(42);
+    t.insert(b9);
+    box b10 = box(0);
+    t.insert(b10);
 
-    cout << "Traversal of tree constructed is\n";
-    t.prefixorder(t.getRoot(), 3);
-    ;
-    cout << endl;
-
-    box *d = t.deletesearch(t.getRoot(), 7);
+    t.prefixorder(t.getRoot(), degree);
+    box *d = t.deletesearch(t.getRoot(), 42, degree);
+    cout << d->x << endl;
     t.remove(*d);
-    cout << "Traversal of tree after removing 7\n";
-    t.prefixorder(t.getRoot(), 3);
+    cout << "-------------" << endl;
+    t.prefixorder(t.getRoot(), degree);
 
-    cout << endl;
-
-    t.remove(b5);
-    cout << "Traversal of tree after removing 11\n";
-    t.prefixorder(t.getRoot(), 3);
-    cout << endl;
-
-    t.remove(b7);
-    cout << "Traversal of tree after removing 21\n";
-    t.prefixorder(t.getRoot(), 3);
-    cout << endl;
     return 0;
 }
