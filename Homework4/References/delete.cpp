@@ -33,10 +33,21 @@ It is advised to read the material in CLRS before taking a look at the code. */
 #include <iostream>
 using namespace std;
 
+class box
+{
+private:
+    /* data */
+public:
+    int x;
+    box(){};
+    box(int nx) { x = nx; };
+    ~box(){};
+};
+
 // A BTree node
 class BTreeNode
 {
-    int *keys;     // An array of keys
+    box *keys;     // An array of keys
     int t;         // Minimum degree (defines the range for number of keys)
     BTreeNode **C; // An array of child pointers
     int n;         // Current number of keys
@@ -46,10 +57,10 @@ public:
     BTreeNode(int _t, bool _leaf); // Constructor
 
     // A function to traverse all nodes in a subtree rooted with this node
-    void traverse();
+    //void traverse();
 
     // A function to search a key in subtree rooted with this node.
-    BTreeNode *search(int k); // returns NULL if k is not present.
+    BTreeNode *search(box &k); // returns NULL if k is not present.
 
     // A function that returns the index of the first key that is greater
     // or equal to k
@@ -58,7 +69,7 @@ public:
     // A utility function to insert a new key in the subtree rooted with
     // this node. The assumption is, the node must be non-full when this
     // function is called
-    void insertNonFull(int k);
+    void insertNonFull(const box &k);
 
     // A utility function to split the child y of this node. i is index
     // of y in child array C[]. The Child y must be full when this
@@ -67,7 +78,7 @@ public:
 
     // A wrapper function to remove the key k in subtree rooted with
     // this node.
-    void remove(int k);
+    void remove(const box &k);
 
     // A function to remove the key present in idx-th position in
     // this node which is a leaf
@@ -79,27 +90,27 @@ public:
 
     // A function to get the predecessor of the key- where the key
     // is present in the idx-th position in the node
-    int getPred(int idx);
+    box getPred(int idx);
 
     // A function to get the successor of the key- where the key
     // is present in the idx-th position in the node
-    int getSucc(int idx);
+    box getSucc(int idx);
 
     // A function to fill up the child node present in the idx-th
     // position in the C[] array if that child has less than t-1 keys
-    void fill(int idx);
+    void fill(int idx); // dokunma
 
     // A function to borrow a key from the C[idx-1]-th node and place
     // it in C[idx]th node
-    void borrowFromPrev(int idx);
+    void borrowFromPrev(int idx); // dokunma
 
     // A function to borrow a key from the C[idx+1]-th node and place it
     // in C[idx]th node
-    void borrowFromNext(int idx);
+    void borrowFromNext(int idx); // dokunma
 
     // A function to merge idx-th child of the node with (idx+1)th child of
     // the node
-    void merge(int idx);
+    void merge(int idx); // dokunma
 
     // Make BTree friend of this so that we can access private members of
     // this class in BTree functions
@@ -118,23 +129,26 @@ public:
         t = _t;
     }
 
-    void traverse()
+    BTreeNode *getRoot() { return root; }
+    void prefixorder(BTreeNode *, int);
+    /*void traverse()
     {
         if (root != NULL)
             root->traverse();
-    }
+    }*/
 
     // function to search a key in this tree
-    BTreeNode *search(int k)
+    BTreeNode *search(box &k)
     {
         return (root == NULL) ? NULL : root->search(k);
     }
 
     // The main function that inserts a new key in this B-Tree
-    void insert(int k);
+    void insert(const box &k);
 
     // The main function that removes a new key in thie B-Tree
-    void remove(int k);
+    void remove(const box &k);
+    box *deletesearch(BTreeNode *, int);
 };
 
 BTreeNode::BTreeNode(int t1, bool leaf1)
@@ -145,7 +159,7 @@ BTreeNode::BTreeNode(int t1, bool leaf1)
 
     // Allocate memory for maximum number of possible keys
     // and child pointers
-    keys = new int[2 * t - 1];
+    keys = new box[2 * t - 1];
     C = new BTreeNode *[2 * t];
 
     // Initialize the number of keys as 0
@@ -154,21 +168,21 @@ BTreeNode::BTreeNode(int t1, bool leaf1)
 
 // A utility function that returns the index of the first key that is
 // greater than or equal to k
-int BTreeNode::findKey(int k)
+int BTreeNode::findKey(int x)
 {
     int idx = 0;
-    while (idx < n && keys[idx] < k)
+    while (idx < n && keys[idx].x < x)
         ++idx;
     return idx;
 }
 
 // A function to remove the key k from the sub-tree rooted with this node
-void BTreeNode::remove(int k)
+void BTreeNode::remove(const box &k)
 {
-    int idx = findKey(k);
+    int idx = findKey(k.x);
 
     // The key to be removed is present in this node
-    if (idx < n && keys[idx] == k)
+    if (idx < n && keys[idx].x == k.x)
     {
 
         // If the node is a leaf node - removeFromLeaf is called
@@ -184,7 +198,7 @@ void BTreeNode::remove(int k)
         // If this node is a leaf node, then the key is not present in tree
         if (leaf)
         {
-            cout << "The key " << k << " is does not exist in the tree\n";
+            cout << "The key " << k.x << " is does not exist in the tree\n";
             return;
         }
 
@@ -227,7 +241,7 @@ void BTreeNode::removeFromLeaf(int idx)
 void BTreeNode::removeFromNonLeaf(int idx)
 {
 
-    int k = keys[idx];
+    box k = keys[idx];
 
     // If the child that precedes k (C[idx]) has atleast t keys,
     // find the predecessor 'pred' of k in the subtree rooted at
@@ -235,7 +249,7 @@ void BTreeNode::removeFromNonLeaf(int idx)
     // in C[idx]
     if (C[idx]->n >= t)
     {
-        int pred = getPred(idx);
+        box pred = getPred(idx);
         keys[idx] = pred;
         C[idx]->remove(pred);
     }
@@ -247,7 +261,7 @@ void BTreeNode::removeFromNonLeaf(int idx)
     // Recursively delete succ in C[idx+1]
     else if (C[idx + 1]->n >= t)
     {
-        int succ = getSucc(idx);
+        box succ = getSucc(idx);
         keys[idx] = succ;
         C[idx + 1]->remove(succ);
     }
@@ -265,7 +279,7 @@ void BTreeNode::removeFromNonLeaf(int idx)
 }
 
 // A function to get predecessor of keys[idx]
-int BTreeNode::getPred(int idx)
+box BTreeNode::getPred(int idx)
 {
     // Keep moving to the right most node until we reach a leaf
     BTreeNode *cur = C[idx];
@@ -276,7 +290,7 @@ int BTreeNode::getPred(int idx)
     return cur->keys[cur->n - 1];
 }
 
-int BTreeNode::getSucc(int idx)
+box BTreeNode::getSucc(int idx)
 {
 
     // Keep moving the left most node starting from C[idx+1] until we reach a leaf
@@ -435,7 +449,7 @@ void BTreeNode::merge(int idx)
 }
 
 // The main function that inserts a new key in this B-Tree
-void BTree::insert(int k)
+void BTree::insert(const box &k)
 {
     // If tree is empty
     if (root == NULL)
@@ -462,7 +476,7 @@ void BTree::insert(int k)
             // New root has two children now. Decide which of the
             // two children is going to have new key
             int i = 0;
-            if (s->keys[0] < k)
+            if (s->keys[0].x < k.x)
                 i++;
             s->C[i]->insertNonFull(k);
 
@@ -477,7 +491,7 @@ void BTree::insert(int k)
 // A utility function to insert a new key in this node
 // The assumption is, the node must be non-full when this
 // function is called
-void BTreeNode::insertNonFull(int k)
+void BTreeNode::insertNonFull(const box &k)
 {
     // Initialize index as index of rightmost element
     int i = n - 1;
@@ -488,7 +502,7 @@ void BTreeNode::insertNonFull(int k)
         // The following loop does two things
         // a) Finds the location of new key to be inserted
         // b) Moves all greater keys to one place ahead
-        while (i >= 0 && keys[i] > k)
+        while (i >= 0 && keys[i].x > k.x)
         {
             keys[i + 1] = keys[i];
             i--;
@@ -501,7 +515,7 @@ void BTreeNode::insertNonFull(int k)
     else // If this node is not leaf
     {
         // Find the child which is going to have the new key
-        while (i >= 0 && keys[i] > k)
+        while (i >= 0 && keys[i].x > k.x)
             i--;
 
         // See if the found child is full
@@ -513,7 +527,7 @@ void BTreeNode::insertNonFull(int k)
             // After split, the middle key of C[i] goes up and
             // C[i] is splitted into two. See which of the two
             // is going to have the new key
-            if (keys[i + 1] < k)
+            if (keys[i + 1].x < k.x)
                 i++;
         }
         C[i + 1]->insertNonFull(k);
@@ -564,7 +578,7 @@ void BTreeNode::splitChild(int i, BTreeNode *y)
 }
 
 // Function to traverse all nodes in a subtree rooted with this node
-void BTreeNode::traverse()
+/*void BTreeNode::traverse()
 {
     // There are n keys and n+1 children, travers through n keys
     // and first n children
@@ -575,24 +589,71 @@ void BTreeNode::traverse()
         // traverse the subtree rooted with child C[i].
         if (leaf == false)
             C[i]->traverse();
-        cout << " " << keys[i];
+        cout << " " << keys[i].x;
     }
 
     // Print the subtree rooted with last child
     if (leaf == false)
         C[i]->traverse();
+}*/
+
+box *BTree::deletesearch(BTreeNode *r, int d)
+{
+    box *silinecek = NULL;
+    if (!r)
+    {
+        return silinecek;
+    }
+    for (int i = 0; i < r->n; i++)
+    {
+        if (d == r->keys[i].x)
+        {
+            silinecek = &r->keys[i];
+            return silinecek;
+        }
+    }
+
+    int i = 0;
+    deletesearch(r->C[i], d);
+
+    for (int x = 0; x < 2 * d; x++)
+    {
+        deletesearch(r->C[++i], d);
+    }
+};
+
+void BTree::prefixorder(BTreeNode *r, int d)
+{
+    if (!r)
+    {
+        return;
+    }
+    for (int i = 0; i < r->n; i++)
+    {
+        //cout << "(" << r->keys[i].x << "," << r->keys[i].y << "," << r->keys[i].z << ")";
+        cout << r->keys[i].x << endl;
+    }
+    cout << endl;
+
+    int i = 0;
+    prefixorder(r->C[i], d);
+
+    for (int x = 0; x < 2 * d; x++)
+    {
+        prefixorder(r->C[++i], d);
+    }
 }
 
 // Function to search key k in subtree rooted with this node
-BTreeNode *BTreeNode::search(int k)
+BTreeNode *BTreeNode::search(box &k)
 {
     // Find the first key greater than or equal to k
     int i = 0;
-    while (i < n && k > keys[i])
+    while (i < n && k.x > keys[i].x)
         i++;
 
     // If the found key is equal to k, return this node
-    if (keys[i] == k)
+    if (keys[i].x == k.x)
         return this;
 
     // If key is not found here and this is a leaf node
@@ -603,7 +664,7 @@ BTreeNode *BTreeNode::search(int k)
     return C[i]->search(k);
 }
 
-void BTree::remove(int k)
+void BTree::remove(const box &k)
 {
     if (!root)
     {
@@ -633,65 +694,61 @@ void BTree::remove(int k)
 // Driver program to test above functions
 int main()
 {
+
     BTree t(3); // A B-Tree with minium degree 3
 
-    t.insert(1);
+    box b1 = box(1);
+    t.insert(b1);
+    box b2 = box(3);
     t.insert(3);
-    t.insert(7);
+    box b3 = box(7);
+    t.insert(b3);
+    box b4 = box(10);
     t.insert(10);
-    t.insert(11);
-    t.insert(13);
-    t.insert(14);
-    t.insert(15);
-    t.insert(18);
-    t.insert(16);
-    t.insert(19);
-    t.insert(24);
-    t.insert(25);
-    t.insert(26);
+    box b5 = box(11);
+    t.insert(b5);
+    box b8 = box(13);
+    t.insert(b8);
+    //t.insert(14);
+    //t.insert(15);
+    //t.insert(18);
+    box b6 = box(16);
+    t.insert(b6);
+    //t.insert(19);
+    //t.insert(24);
+    //t.insert(25);
+    //t.insert(26);
+    box b7 = box(21);
     t.insert(21);
-    t.insert(4);
-    t.insert(5);
-    t.insert(20);
-    t.insert(22);
-    t.insert(2);
-    t.insert(17);
-    t.insert(12);
-    t.insert(6);
+    //t.insert(4);
+    //t.insert(5);
+    //t.insert(20);
+    //t.insert(22);
+    //t.insert(2);
+    //t.insert(17);
+    //t.insert(12);
+    //t.insert(6);
 
     cout << "Traversal of tree constructed is\n";
-    t.traverse();
+    t.prefixorder(t.getRoot(), 3);
+    ;
     cout << endl;
 
-    t.remove(6);
-    cout << "Traversal of tree after removing 6\n";
-    t.traverse();
-    cout << endl;
-
-    t.remove(13);
-    cout << "Traversal of tree after removing 13\n";
-    t.traverse();
-    cout << endl;
-
-    t.remove(7);
+    box *d = t.deletesearch(t.getRoot(), 7);
+    t.remove(*d);
     cout << "Traversal of tree after removing 7\n";
-    t.traverse();
+    t.prefixorder(t.getRoot(), 3);
+
     cout << endl;
 
-    t.remove(4);
-    cout << "Traversal of tree after removing 4\n";
-    t.traverse();
+    t.remove(b5);
+    cout << "Traversal of tree after removing 11\n";
+    t.prefixorder(t.getRoot(), 3);
     cout << endl;
 
-    t.remove(2);
-    cout << "Traversal of tree after removing 2\n";
-    t.traverse();
+    t.remove(b7);
+    cout << "Traversal of tree after removing 21\n";
+    t.prefixorder(t.getRoot(), 3);
     cout << endl;
-
-    t.remove(16);
-    cout << "Traversal of tree after removing 16\n";
-    t.traverse();
-    cout << endl;
-
     return 0;
 }
