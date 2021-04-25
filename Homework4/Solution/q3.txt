@@ -1,0 +1,4 @@
+For Part3.1: There will be 3.log(n) so Big O notation will not change. 
+Answer: logn
+For Part3.2: On standart devion need n times more hard computition so will 
+Answer: n(logn)
